@@ -16,4 +16,5 @@ import java.util.List;
 public class ProjectThing implements Serializable {
     private Project project;
     private List<Device> devices;
+    private List<ZhydData> zhydData;
 }

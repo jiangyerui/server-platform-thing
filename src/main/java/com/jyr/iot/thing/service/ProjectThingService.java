@@ -6,11 +6,13 @@ import com.jyr.iot.platform.pojo.Device;
 import com.jyr.iot.platform.pojo.DeviceExample;
 import com.jyr.iot.platform.pojo.Project;
 import com.jyr.iot.thing.pojogroup.ProjectThing;
+import com.jyr.iot.thing.pojogroup.ZhydData;
 import com.jyr.iot.thing.redis.RedisService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 @Slf4j
 @Service
@@ -33,10 +35,14 @@ public class ProjectThingService {
             DeviceExample.Criteria deviceExampleCriteria = deviceExample.createCriteria();
             deviceExampleCriteria.andDeviceProjectIdEqualTo(projectId);
             List<Device> devices = deviceMapper.selectByExample(deviceExample);
-            ProjectThing projectThing = new ProjectThing(project,devices);
+            List<ZhydData> list = new ArrayList<>();
+            for (Device device:devices){
+                list.add(redisService.getZhyd(device.getDeviceNo()));
+            }
+            ProjectThing projectThing = new ProjectThing(project,devices,list);
             redisService.setProjectThing(projectThing);
             return projectThing;
         }
-
     }
+
 }
